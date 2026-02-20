@@ -10,6 +10,9 @@ headers = {
 
 
 async def links_fetcher(url: str, session: aiohttp.ClientSession, limit: int = 10):
+    """
+    Makes 1 request to the donor-site sitemap
+    """
     try:
         async with session.get(url=url, headers=headers) as response:
             if response.status == 200:
