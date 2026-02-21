@@ -29,10 +29,11 @@ def get_product_attrs(title: str) -> dict:
     """
     brand = quick_find(r"Смартфон\s+(\w+)", title, group_no=1)
     memory = quick_find(r"\d+(?:GB|TB)", title)
-    sim = quick_find(r"(eSim|Dual[\s-]?Sim|Глобал|[\w-]*[\s-]?сим)", title)
+    sim = quick_find(
+        r"(eSim|nanoSim\+eSim|Dual[\s-]?Sim|Global|Глобал|[\w-]*[\s-]?сим)", title)
     model = quick_find(
         rf"{brand}\s+(.*?)\s+{re.escape(memory)}", title, group_no=1)
-    color = quick_find(rf"{re.escape(sim)}\s+(.*?)\s+\(", title, group_no=1)
+    color = quick_find(r"([A-Za-z0-9\s-]+)\s+\([^)]+\)$", title, group_no=1)
 
     return {
         "brand": brand,
@@ -80,13 +81,14 @@ async def fetch_item_data(url: str, session: aiohttp.ClientSession):
     }
     print(f">>> Спарсили: {attrs['brand']} {attrs['model']} | Цена: {price}")
 
+    print(product_data)
     return product_data
 
 
 if __name__ == '__main__':
     import asyncio
 
-    test_url_in_stock = "https://best-magazin.com/apple/iphone/iphone-17-air/iphone-17-air-512-gb-esim-black.html"
+    test_url_in_stock = "https://best-magazin.com/apple/iphone/iphone-16-pro/iphone-16-pro-256gb-global-nanosim-esim-natural-titanium.html"
     test_url_not_in_stock = "https://best-magazin.com/apple/iphone/iphone-16-pro/iphone-16-pro-512gb-dual-sim-desert-titanium.html"
 
     async def test():
