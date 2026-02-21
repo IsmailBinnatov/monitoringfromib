@@ -2,8 +2,6 @@ import aiohttp
 from bs4 import BeautifulSoup
 
 
-SITEMAP_URL = "https://best-magazin.com/ocsitemap.xml"
-
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
@@ -34,6 +32,8 @@ async def links_fetcher(url: str, session: aiohttp.ClientSession, limit: int = 1
 
 if __name__ == "__main__":
     import asyncio
+
+    SITEMAP_URL = "https://best-magazin.com/ocsitemap.xml"
 
     async def test():
         async with aiohttp.ClientSession() as session:
