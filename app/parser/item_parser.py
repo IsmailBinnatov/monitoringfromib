@@ -4,6 +4,9 @@ from bs4 import BeautifulSoup
 
 
 def in_stock_check(soup: BeautifulSoup) -> bool:
+    """
+    Сhecks product availability
+    """
     div = soup.find("div", class_="nalich")
     if not div:
         return False
@@ -13,11 +16,17 @@ def in_stock_check(soup: BeautifulSoup) -> bool:
 
 
 def quick_find(pattern, text, group_no=0):
+    """
+    regex search pattern
+    """
     match = re.search(pattern, text, re.I)
     return match.group(group_no).strip() if match else None
 
 
 def get_product_attrs(title: str) -> dict:
+    """
+    Collects product attributes from product full name
+    """
     brand = quick_find(r"Смартфон\s+(\w+)", title, group_no=1)
     memory = quick_find(r"\d+(?:GB|TB)", title)
     sim = quick_find(r"(eSim|Dual[\s-]?Sim|Глобал|[\w-]*[\s-]?сим)", title)
@@ -35,6 +44,9 @@ def get_product_attrs(title: str) -> dict:
 
 
 async def fetch_item_data(url: str, session: aiohttp.ClientSession):
+    """
+    Collects product all data 
+    """
     async with session.get(url=url) as response:
         html = await response.text()
         soup = BeautifulSoup(html, "lxml")
