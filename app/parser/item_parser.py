@@ -62,11 +62,18 @@ async def fetch_item_data(url: str, session: aiohttp.ClientSession):
 
         offers = soup.find("div", {"itemprop": "offers"})
         if offers:
-            price_tag = offers.find("span", class_="update_special") or \
-                offers.find("span", class_="update_price")
-            if price_tag:
-                raw_price = price_tag.text.strip()
-                price = int("".join(filter(str.isdigit, raw_price)))
+            # print(response.url)
+            special_tag = offers.find("span", class_="update_special")
+            regular_tag = offers.find("span", class_="update_price")
+
+            special_text = special_tag.text.strip() if special_tag else ""
+            regular_text = regular_tag.text.strip() if regular_tag else ""
+
+            raw_price = special_text or regular_text
+
+            if raw_price:
+                digits_only = "".join(filter(str.isdigit, raw_price))
+                price = int(digits_only) if digits_only else 0
             else:
                 price = 0
         else:
