@@ -1,8 +1,9 @@
 import asyncio
 import aiohttp
 
-from links_fetcher import links_fetcher
-from item_parser import fetch_item_data
+from app.parser.links_fetcher import links_fetcher
+from app.parser.item_parser import fetch_item_data
+from app.parser.database_ops import save_parsed_data
 
 
 MAX_CONCURENT_REQUESTS = 2
@@ -17,7 +18,7 @@ async def process_single_url(url: str, session: aiohttp.ClientSession, semaphore
 
 async def main():
     """
-    Main func that uses links_fetcher and fetch_item_data to complete the parser
+    Main func that uses links_fetcher, fetch_item_data and save_parsed_data to complete the parser
     """
     semaphore = asyncio.Semaphore(MAX_CONCURENT_REQUESTS)
 
@@ -30,6 +31,12 @@ async def main():
 
         raw_results = await asyncio.gather(*tasks)
     valid_data = [item for item in raw_results if item is not None]
+
+    if valid_data:
+        print(
+            f"--- Сбор окончен. Сохраняем {len(valid_data)} товаров в БД ---")
+        await save_parsed_data(valid_data)
+        print("--- Данные успешно сохранены! ---")
 
     print("-----------------------------------")
     print(valid_data)
