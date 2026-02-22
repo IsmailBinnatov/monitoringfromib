@@ -3,6 +3,14 @@ from datetime import datetime
 from typing import Optional
 
 
+class PriceRead(BaseModel):
+    id: int
+    price: int
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class ProductRead(BaseModel):
     id: int
     name: str
@@ -10,14 +18,6 @@ class ProductRead(BaseModel):
     attributes: dict
     created_at: datetime
     updated_at: datetime
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class PriceRead(BaseModel):
-    id: int
-    price: int
-    created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
 
