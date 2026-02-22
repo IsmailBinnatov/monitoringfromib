@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import String, ForeignKey, func
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
 
@@ -18,6 +18,9 @@ class Product(Base):
     updated_at: Mapped[datetime] = mapped_column(
         server_default=func.now(), onupdate=func.now())
 
+    prices: Mapped[list["PriceHistory"]] = relationship(
+        back_populates="product")
+
 
 class PriceHistory(Base):
     __tablename__ = "prices"
@@ -27,3 +30,5 @@ class PriceHistory(Base):
     price: Mapped[int]
 
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+    product: Mapped["Product"] = relationship(back_populates="prices")
