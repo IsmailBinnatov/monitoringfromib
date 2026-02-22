@@ -10,7 +10,9 @@ app = FastAPI(
 )
 
 
-@app.include_router(product_router)
+app.include_router(product_router)
+
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to Apple Price Monitor API! Go to /docs for Swagger"}
