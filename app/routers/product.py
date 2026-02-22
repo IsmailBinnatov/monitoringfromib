@@ -15,3 +15,8 @@ router = APIRouter(
 @router.get("/", response_model=list[ProductWithPrices])
 async def get_products(db: AsyncSession = Depends(get_async_db)):
     return await crud.get_all_products(db)
+
+
+@router.get("/{product_id}", response_model=ProductWithPrices)
+async def get_product_by_id(product_id: int, db: AsyncSession = Depends(get_async_db)):
+    return await crud.get_product_by_id(product_id, db)
