@@ -7,8 +7,8 @@ from app import crud
 
 
 router = APIRouter(
-    prefix="/products",
-    tags=["Products"]
+    prefix="/api/v1/products",
+    tags=["Products API"]
 )
 
 
