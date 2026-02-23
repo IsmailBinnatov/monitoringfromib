@@ -1,0 +1,80 @@
+/* Базовые настройки страницы */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.5;
+}
+
+/* Главный контейнер по центру экрана */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Заголовки */
+h1, h3 {
+    color: #1d1d1f;
+}
+
+/* Ссылки */
+a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Сетка для списка товаров (products.html) */
+.products-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Карточка отдельного товара */
+.product-card {
+    border: 1px solid #e5e5ea;
+    border-radius: 8px;
+    padding: 20px;
+    background: #fafafa;
+    transition: transform 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Красивая таблица для цен (product_detail.html) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e5ea;
+}
+
+th {
+    background-color: #f5f5f7;
+    font-weight: 600;
+}
+
+/* Список характеристик */
+.attributes-list {
+    background: #f5f5f7;
+    padding: 15px 15px 15px 35px;
+    border-radius: 8px;
+}

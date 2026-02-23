@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Детали</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='styles/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <a href="/products">← Назад к списку товаров</a>
+        
+        <h1>{{ product.name }}</h1>
+        <p><strong>Оригинал:</strong> <a href="{{ product.url }}" target="_blank">Ссылка на магазин</a></p>
+
+        <h3>Характеристики:</h3>
+        <ul class="attributes-list">
+            {% if product.attributes %}
+                {% for key, value in product.attributes.items() %}
+                    <li><strong>{{ key }}:</strong> {{ value }}</li>
+                {% endfor %}
+            {% else %}
+                <li>Характеристики не указаны</li>
+            {% endif %}
+        </ul>
+
+        <h3>История изменения цен:</h3>
+        {% if product.prices %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Дата фиксации</th>
+                        <th>Цена</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in product.prices %}
+                        <tr>
+                            <td>{{ item.created_at }}</td>
+                            <td>{{ item.price }} руб.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>История цен пока пуста.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
