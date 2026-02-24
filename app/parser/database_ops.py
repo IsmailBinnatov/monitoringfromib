@@ -54,7 +54,7 @@ async def save_parsed_data(parsed_items: list[dict]):
             p_id = url_id_to_map[item["url"]]
             parsed_price = item["price"]
 
-            last_db_price = last_price_map[p_id]
+            last_db_price = last_price_map.get(p_id)
 
             if last_db_price != parsed_price:
                 updated_prices_data.append(
