@@ -19,14 +19,18 @@ class Product(Base):
         server_default=func.now(), onupdate=func.now())
 
     prices: Mapped[list["PriceHistory"]] = relationship(
-        back_populates="product")
+        "PriceHistory",
+        back_populates="product",
+        cascade="all, delete-orphan"
+    )
 
 
 class PriceHistory(Base):
     __tablename__ = "prices"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
+    product_id: Mapped[int] = mapped_column(
+        ForeignKey("products.id", ondelete="CASCADE"))
     price: Mapped[int]
 
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
