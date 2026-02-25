@@ -7,6 +7,7 @@ from app.parser.database_ops import save_parsed_data
 
 
 MAX_CONCURENT_REQUESTS = 2
+OFFSET = 0  # last value 50
 URL_COUNT = 50
 SITEMAP_URL = "https://best-magazin.com/ocsitemap.xml"
 
@@ -23,7 +24,7 @@ async def main():
     semaphore = asyncio.Semaphore(MAX_CONCURENT_REQUESTS)
 
     async with aiohttp.ClientSession() as session:
-        urls = await links_fetcher(url=SITEMAP_URL, session=session, limit=URL_COUNT)
+        urls = await links_fetcher(url=SITEMAP_URL, session=session, offset=OFFSET, limit=URL_COUNT)
         print(f"Найдено ссылок: {len(urls)}. Запускаем сбор данных...")
 
         tasks = [process_single_url(
@@ -36,7 +37,7 @@ async def main():
         print(
             f"--- Сбор окончен. Сохраняем {len(valid_data)} товаров в БД ---")
         await save_parsed_data(valid_data)
-        print("--- Данные успешно сохранены! ---")
+        print(f"--- Данные успешно сохранены: {len(valid_data)} шт. ---")
 
     print("-----------------------------------")
     print(valid_data)

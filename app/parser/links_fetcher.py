@@ -7,7 +7,7 @@ headers = {
 }
 
 
-async def links_fetcher(url: str, session: aiohttp.ClientSession, limit: int = 10):
+async def links_fetcher(url: str, session: aiohttp.ClientSession, offset: int = 0, limit: int = 10):
     """
     Makes 1 request to the donor-site sitemap
     """
@@ -21,7 +21,7 @@ async def links_fetcher(url: str, session: aiohttp.ClientSession, limit: int = 1
                 links = [
                     loc.text for loc in locs if "/apple/iphone/" in loc.text and loc.text.endswith(".html")]
 
-                return links[:limit]
+                return links[offset: offset + limit]
             else:
                 print(f"Ошибка сервера: {response.status}")
                 return []
