@@ -1,1 +1,1 @@
-from app.models.product import Product, PriceHistory
+from app.models.models import Product, PriceHistory
