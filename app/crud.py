@@ -39,9 +39,13 @@ async def delete_all_price_history(db: AsyncSession):
 
 
 async def delete_history_by_product_id(product_id: int, db: AsyncSession):
+    product = await db.get(Product, product_id)
+    if not product:
+        return False
     stmt = delete(PriceHistory).where(PriceHistory.product_id == product_id)
     await db.execute(stmt)
     await db.commit()
+    return True
 
 
 async def delete_history_by_history_id(history_id: int, db: AsyncSession):
@@ -53,5 +57,5 @@ async def delete_history_by_history_id(history_id: int, db: AsyncSession):
     if price_history:
         await db.delete(price_history)
         await db.commit()
-    else:
-        print("There is nothing to delete.")
+        return True
+    return False
