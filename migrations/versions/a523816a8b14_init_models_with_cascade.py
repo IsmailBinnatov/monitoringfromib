@@ -1,8 +1,8 @@
 """init models with cascade
 
-Revision ID: 351da512139e
+Revision ID: a523816a8b14
 Revises: 
-Create Date: 2026-02-25 15:44:04.791860
+Create Date: 2026-02-25 16:24:11.853121
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '351da512139e'
+revision: str = 'a523816a8b14'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
