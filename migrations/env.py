@@ -10,7 +10,7 @@ from alembic import context
 
 from app.config import settings
 from app.database import Base
-from app.models.models import Product, PriceHistory
+from app.models import Product, PriceHistory, User
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
