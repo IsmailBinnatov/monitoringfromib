@@ -39,7 +39,7 @@ class PriceHistory(Base):
     product: Mapped["Product"] = relationship(back_populates="prices")
 
 
-class UserRole(enum.Enum):
+class UserRole(str, enum.Enum):
     SUPER_ADMIN = "super_admin"
     ADMIN = "admin"
     USER = "user"
