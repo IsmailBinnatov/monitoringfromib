@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.pages.routers import router as product_router
-from app.api.routers.product import router as api_router
+from app.api.routers.products import router as api_router
 
 
 app = FastAPI(
