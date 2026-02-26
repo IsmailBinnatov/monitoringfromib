@@ -3,6 +3,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.pages.routers import router as product_router
 from app.api.routers.products import router as api_router
+from app.api.routers.users import router as user_router
 
 
 app = FastAPI(
@@ -15,6 +16,7 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 
 app.include_router(product_router)
+app.include_router(user_router)
 app.include_router(api_router)
 
 
