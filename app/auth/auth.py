@@ -2,25 +2,19 @@ from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta, timezone
 import jwt
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.config import settings
 from app.database import get_async_db
-from app.models.models import User as UserModel
+from app.models.models import User as UserModel, UserRole
+
+from app import exceptions
 
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
-
-
-def credentials_exception(message: str = "Could not validate credentials"):
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail=f"{message}",
-        headers={"WWW-Authenticate": "Bearer"}
-    )
 
 
 def create_access_token(data: dict):
@@ -37,20 +31,20 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
                              algorithms=[settings.ALGORITHM])
         sub = payload.get("sub")
         if not sub:
-            credentials_exception("Token payload missing 'sub'")
+            exceptions.credentials_exception_401("Token payload missing 'sub'")
 
         try:
             user_id = int(sub)
         except ValueError:
-            credentials_exception("Invalid user ID format")
+            exceptions.credentials_exception_401("Invalid user ID format")
 
         if user_id <= 0:
-            credentials_exception("Invalid user ID format")
+            exceptions.credentials_exception_401("Invalid user ID format")
 
     except jwt.ExpiredSignatureError:
-        credentials_exception("Token has expired")
+        exceptions.credentials_exception_401("Token has expired")
     except jwt.PyJWTError:
-        credentials_exception()
+        exceptions.credentials_exception_401()
 
     user = (await db.scalars(
         select(UserModel)
@@ -58,6 +52,20 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
     ).first()
 
     if not user:
-        credentials_exception()
+        exceptions.credentials_exception_401()
 
     return user
+
+
+async def is_super_admin(current_user: UserModel = Depends(get_current_user)):
+    if current_user.role != UserRole.SUPER_ADMIN:
+        exceptions.forbidden_exception_403()
+
+    return current_user
+
+
+async def is_admin(current_user: UserModel = Depends(get_current_user)):
+    if current_user.role != UserRole.ADMIN and current_user.role != UserRole.SUPER_ADMIN:
+        exceptions.forbidden_exception_403()
+
+    return current_user
