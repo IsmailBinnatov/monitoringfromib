@@ -60,5 +60,6 @@ class UserRead(BaseModel):
 class UserUpdate(BaseModel):
     username: str | None = Field(default=None, min_length=2, max_length=20)
     email: EmailStr | None = Field(default=None)
-    password: str | None = Field(default=None, min_length=4, max_length=20)
+    hashed_password: str | None = Field(
+        default=None, min_length=4, max_length=20)
     role: UserRole | None = Field(default=None)
