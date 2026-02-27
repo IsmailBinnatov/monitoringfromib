@@ -18,7 +18,7 @@ def credentials_exception_401(detail: str = "Could not validate credentials"):
     )
 
 
-def forbidden_exception_403(detail: str = "You don't have permission to do this"):
+def forbidden_exception_403(detail: str = "Access denied"):
     """Throws a 403 error when permissions are insufficient (e.g., not a super admin)"""
     raise HTTPException(
         status_code=status.HTTP_403_FORBIDDEN,
