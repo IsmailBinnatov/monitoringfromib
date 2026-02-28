@@ -87,6 +87,22 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
     }
 
 
+@router.post("/logout", status_code=status.HTTP_200_OK)
+async def logout(body: RefreshTokenRequest, db: AsyncSession = Depends(get_async_db)):
+    db_token = (await db.scalars(
+        select(RefreshToken)
+        .where(RefreshToken.token == body.refresh_token)
+    )).first()
+
+    if not db_token:
+        exceptions.credentials_exception_401()
+
+    await db.delete(db_token)
+    await db.commit()
+
+    return {"message": "Successful logout from the system"}
+
+
 @router.post("/refresh-token", status_code=status.HTTP_200_OK)
 async def refresh_token(body: RefreshTokenRequest, db: AsyncSession = Depends(get_async_db)):
     try:
