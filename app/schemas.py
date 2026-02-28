@@ -63,3 +63,7 @@ class UserUpdate(BaseModel):
     hashed_password: str | None = Field(
         default=None, min_length=4, max_length=20)
     role: UserRole | None = Field(default=None)
+
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str

@@ -4,9 +4,11 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
 
+import jwt
+
 from app.models.models import User as UserModel, UserRole, RefreshToken
-from app.schemas import UserCreate, UserRead, UserUpdate
-from app.database import get_async_db
+from app.schemas import UserCreate, UserRead, UserUpdate, RefreshTokenRequest
+from app.database import get_async_db, settings
 
 from app import exceptions
 
@@ -81,6 +83,67 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
+        "token_type": "bearer"
+    }
+
+
+@router.post("/refresh-token", status_code=status.HTTP_200_OK)
+async def refresh_token(body: RefreshTokenRequest, db: AsyncSession = Depends(get_async_db)):
+    try:
+        payload = jwt.decode(body.refresh_token, settings.SECRET_KEY,
+                             algorithms=[settings.ALGORITHM])
+
+        user_id_str = payload.get("sub")
+        token_type = payload.get("token_type")
+
+        if user_id_str is None or token_type != "refresh":
+            exceptions.credentials_exception_401()
+
+        user_id = int(user_id_str)
+
+    except (jwt.ExpiredSignatureError, jwt.PyJWTError, ValueError):
+        exceptions.credentials_exception_401()
+
+    db_token = (await db.scalars(
+        select(RefreshToken)
+        .where(RefreshToken.token == body.refresh_token)
+    )).first()
+
+    user = (await db.scalars(
+        select(UserModel)
+        .where(UserModel.id == user_id, UserModel.is_active == True)
+    )).first()
+
+    if not db_token or not user:
+        exceptions.credentials_exception_401()
+
+    await db.delete(db_token)
+
+    user_data = {
+        "sub": str(user.id),
+        "username": user.username,
+        "email": user.email,
+        "role": user.role
+    }
+
+    new_access_token = create_access_token(data=user_data)
+    new_refresh_token = create_refresh_token(data=user_data)
+
+    expire_date = datetime.now(timezone.utc) + \
+        timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+
+    new_db_token = RefreshToken(
+        token=new_refresh_token,
+        expires_at=expire_date.replace(tzinfo=None),
+        user_id=user.id
+    )
+
+    db.add(new_db_token)
+    await db.commit()
+
+    return {
+        "access_token": new_access_token,
+        "refresh_token": new_refresh_token,
         "token_type": "bearer"
     }
 
