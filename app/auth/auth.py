@@ -13,7 +13,9 @@ from app.models.models import User as UserModel, UserRole
 from app import exceptions
 
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
+REFRESH_TOKEN_EXPIRE_DAYS = 30
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")
 
 
@@ -21,7 +23,21 @@ def create_access_token(data: dict):
     payload_to_encode = data.copy()
     expire = datetime.now(timezone.utc) + \
         timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    payload_to_encode.update({"exp": expire})
+    payload_to_encode.update({
+        "exp": expire,
+        "token_type": "access"
+    })
+    return jwt.encode(payload_to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+
+def create_refresh_token(data: dict):
+    payload_to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + \
+        timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    payload_to_encode.update({
+        "exp": expire,
+        "token_type": "refresh"
+    })
     return jwt.encode(payload_to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 

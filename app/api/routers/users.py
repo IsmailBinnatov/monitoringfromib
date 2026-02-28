@@ -1,15 +1,16 @@
+from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, status
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.models.models import User as UserModel, UserRole
+from app.models.models import User as UserModel, UserRole, RefreshToken
 from app.schemas import UserCreate, UserRead, UserUpdate
 from app.database import get_async_db
 
 from app import exceptions
 
-from app.auth.auth import create_access_token, is_super_admin
+from app.auth.auth import create_access_token, create_refresh_token, is_super_admin, REFRESH_TOKEN_EXPIRE_DAYS
 from app.auth.utils import verify_password, hash_password
 
 
@@ -56,10 +57,32 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
     if not user or not verify_password(form_data.password, user.hashed_password):
         exceptions.credentials_exception_401("Incorrect email or password")
 
-    user_data = {"sub": str(user.id), "username": user.username,
-                 "email": user.email, "role": user.role}
+    user_data = {
+        "sub": str(user.id),
+        "username": user.username,
+        "email": user.email,
+        "role": user.role
+    }
     access_token = create_access_token(data=user_data)
-    return {"access_token": access_token, "token_type": "bearer"}
+    refresh_token = create_refresh_token(data=user_data)
+
+    refresh_token_expire_date = datetime.now(
+        timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+
+    db_refresh_token = RefreshToken(
+        token=refresh_token,
+        expires_at=refresh_token_expire_date.replace(tzinfo=None),
+        user_id=user.id
+    )
+
+    db.add(db_refresh_token)
+    await db.commit()
+
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer"
+    }
 
 
 @router.get("/", response_model=list[UserRead], status_code=status.HTTP_200_OK)
@@ -116,7 +139,7 @@ async def delete_non_super_admins(super_admin: UserModel = Depends(is_super_admi
 @router.delete("/{user_id}", status_code=status.HTTP_200_OK)
 async def delete_non_super_admins(user_id: int, super_admin: UserModel = Depends(is_super_admin), db: AsyncSession = Depends(get_async_db)):
     """
-    Deactives all non super-admins (only for super-admin)
+    Deactives non super-admin user (only for super-admin)
     """
     await db.execute(
         update(UserModel).where(
