@@ -23,7 +23,8 @@ async def links_fetcher(url: str, session: aiohttp.ClientSession, offset: int = 
                 links = [
                     loc.text for loc in locs if "/apple/iphone/" in loc.text and loc.text.endswith(".html")]
 
-                return links[offset: offset + limit]
+                limit = None if limit == 0 else offset + limit
+                return links[offset: limit]
             else:
                 logger.error(f"Parser: Error when requesting a page, status: {response.status} \n \
                              URL: {url}")
