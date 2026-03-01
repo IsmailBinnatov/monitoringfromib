@@ -5,6 +5,8 @@ from app.parser.links_fetcher import links_fetcher
 from app.parser.item_parser import fetch_item_data
 from app.parser.database_ops import save_parsed_data
 
+from app.logs.logger import logger
+
 
 MAX_CONCURENT_REQUESTS = 2
 OFFSET = 0  # last value 50
@@ -25,7 +27,8 @@ async def main():
 
     async with aiohttp.ClientSession() as session:
         urls = await links_fetcher(url=SITEMAP_URL, session=session, offset=OFFSET, limit=URL_COUNT)
-        print(f"Найдено ссылок: {len(urls)}. Запускаем сбор данных...")
+        logger.info(
+            f"Parser: Links found: {len(urls)}. Starting data collection...")
 
         tasks = [process_single_url(
             url=prod_url, session=session, semaphore=semaphore) for prod_url in urls]
@@ -34,13 +37,12 @@ async def main():
     valid_data = [item for item in raw_results if item is not None]
 
     if valid_data:
-        print(
-            f"--- Сбор окончен. Сохраняем {len(valid_data)} товаров в БД ---")
+        logger.info(
+            f"Parser: Collection complete. Saving {len(valid_data)} items to the database.")
         await save_parsed_data(valid_data)
-        print(f"--- Данные успешно сохранены: {len(valid_data)} шт. ---")
+        logger.info(
+            f"Parser: Data successfully saved: {len(valid_data)} items.")
 
-    print("-----------------------------------")
-    print(valid_data)
     return valid_data
 
 

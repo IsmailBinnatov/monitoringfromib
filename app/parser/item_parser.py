@@ -2,6 +2,8 @@ import re
 import aiohttp
 from bs4 import BeautifulSoup
 
+from app.logs.logger import logger
+
 
 def in_stock_check(soup: BeautifulSoup) -> bool:
     """
@@ -54,7 +56,7 @@ async def fetch_item_data(url: str, session: aiohttp.ClientSession):
 
         in_stock = in_stock_check(soup)
         if not in_stock:
-            print(f"Товара нет в наличии: {url}")
+            logger.error(f"Parser: Item is out of stock: {url}")
             return None
 
         product_full_name = soup.find("section", class_="main-content").find(
@@ -62,7 +64,6 @@ async def fetch_item_data(url: str, session: aiohttp.ClientSession):
 
         offers = soup.find("div", {"itemprop": "offers"})
         if offers:
-            # print(response.url)
             special_tag = offers.find("span", class_="update_special")
             regular_tag = offers.find("span", class_="update_price")
 
@@ -86,20 +87,7 @@ async def fetch_item_data(url: str, session: aiohttp.ClientSession):
         "url": url,
         "attributes": attrs
     }
-    print(f">>> Спарсили: {attrs['brand']} {attrs['model']} | Цена: {price}")
+    logger.info(
+        f"> Parser: Received {attrs['brand']} {attrs['model']} | Цена: {price}")
 
-    print(product_data)
     return product_data
-
-
-if __name__ == '__main__':
-    import asyncio
-
-    test_url_in_stock = "https://best-magazin.com/apple/iphone/iphone-16-pro/iphone-16-pro-256gb-global-nanosim-esim-natural-titanium.html"
-    test_url_not_in_stock = "https://best-magazin.com/apple/iphone/iphone-16-pro/iphone-16-pro-512gb-dual-sim-desert-titanium.html"
-
-    async def test():
-        async with aiohttp.ClientSession() as session:
-            await fetch_item_data(url=test_url_in_stock, session=session)
-
-    asyncio.run(test())

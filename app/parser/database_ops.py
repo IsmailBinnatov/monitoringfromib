@@ -4,6 +4,8 @@ from sqlalchemy.dialects.postgresql import insert
 from app.database import async_session_maker
 from app.models import Product, PriceHistory
 
+from app.logs.logger import logger
+
 
 async def save_parsed_data(parsed_items: list[dict]):
     """Perform bulk upsert for products and record price history (only if changed)"""
@@ -63,9 +65,10 @@ async def save_parsed_data(parsed_items: list[dict]):
 
         if updated_prices_data:
             session.add_all(updated_prices_data)
-            print(
-                f"Price history updated for {len(updated_prices_data)} items.")
+            logger.info(
+                f"Parser: Price history updated for {len(updated_prices_data)} items.")
         else:
-            print("Prices haven't changed. History hasn't been updated.")
+            logger.info(
+                "Parser: Prices haven't changed. History hasn't been updated.")
 
         await session.commit()

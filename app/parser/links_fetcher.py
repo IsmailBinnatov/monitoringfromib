@@ -1,6 +1,8 @@
 import aiohttp
 from bs4 import BeautifulSoup
 
+from app.logs.logger import logger
+
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -23,24 +25,9 @@ async def links_fetcher(url: str, session: aiohttp.ClientSession, offset: int = 
 
                 return links[offset: offset + limit]
             else:
-                print(f"Ошибка сервера: {response.status}")
+                logger.error(f"Parser: Error when requesting a page, status: {response.status} \n \
+                             URL: {url}")
                 return []
     except Exception as e:
-        print(f"Ошибка сети: {e}")
+        logger.error(f"Parser: Network error: {e}")
         return []
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    SITEMAP_URL = "https://best-magazin.com/ocsitemap.xml"
-
-    async def test():
-        async with aiohttp.ClientSession() as session:
-            print(f"--- Тестовый запуск ---")
-            links = await links_fetcher(SITEMAP_URL, session)
-            print(f"Найдено ссылок: {len(links)}")
-            for l in links:
-                print(l)
-
-    asyncio.run(test())
