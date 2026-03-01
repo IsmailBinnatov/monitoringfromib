@@ -1,5 +1,11 @@
 import logging
 import sys
+from pathlib import Path
+
+
+BASE_DIR = Path(__file__).parent
+
+LOG_FILE = BASE_DIR / "app.log"
 
 
 formatter = logging.Formatter(
