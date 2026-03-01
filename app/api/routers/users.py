@@ -22,6 +22,9 @@ router = APIRouter(
 )
 
 
+# ----- Method: POST
+
+
 @router.post("/", response_model=UserRead, status_code=status.HTTP_201_CREATED)
 async def create_user(user: UserCreate, db: AsyncSession = Depends(get_async_db)):
     """
@@ -164,6 +167,9 @@ async def refresh_token(body: RefreshTokenRequest, db: AsyncSession = Depends(ge
     }
 
 
+# ----- Method: GET
+
+
 @router.get("/", response_model=list[UserRead], status_code=status.HTTP_200_OK)
 async def get_all_users(super_admin: UserModel = Depends(is_super_admin), db: AsyncSession = Depends(get_async_db)):
     """
@@ -171,6 +177,9 @@ async def get_all_users(super_admin: UserModel = Depends(is_super_admin), db: As
     """
     all_users = (await db.scalars(select(UserModel))).all()
     return all_users
+
+
+# ----- Method: PUT
 
 
 @router.put("/{user_id}", response_model=UserRead, status_code=status.HTTP_200_OK)
@@ -197,6 +206,9 @@ async def user_update(user_id: int, updated_user_data: UserUpdate, super_admin: 
     await db.commit()
 
     return updated_user
+
+
+# ----- Method: DELETE
 
 
 @router.delete("/", status_code=status.HTTP_200_OK)
