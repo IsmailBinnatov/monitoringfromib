@@ -1,1 +1,1 @@
-from .models import Product, PriceHistory, User, RefreshToken, SystemTask
+from .models import Product, PriceHistory, User, UserRole, RefreshToken, SystemTask
