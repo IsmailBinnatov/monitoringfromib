@@ -23,6 +23,8 @@ This project is a powerful tool designed to automate the collection and analysis
 3. **Containerization:** Fully Dockerized environment for consistent deployment across local and production servers.
 4. **Structured Logging:** Comprehensive system events logging—from database operations to parsing results.
 5. **RESTful API:** Clean and well-documented endpoints following industry standards.
+6. **Background Task Execution:** Long-running scraping processes are delegated to FastAPI `BackgroundTasks`, keeping the API instantly responsive for clients.
+7. **Smart Rate Limiting & RBAC:** A custom, database-backed rate limiter prevents server overload by enforcing a 1-hour cooldown for standard users, seamlessly integrated with Role-Based Access Control for administrative overrides.
 
 ## 📥 Local Development Setup
 
