@@ -9,7 +9,7 @@ from app.logs.logger import logger
 
 
 MAX_CONCURENT_REQUESTS = 2
-OFFSET = 0  # last value 50
+OFFSET = 0
 URL_COUNT = 50
 SITEMAP_URL = "https://best-magazin.com/ocsitemap.xml"
 
@@ -19,14 +19,14 @@ async def process_single_url(url: str, session: aiohttp.ClientSession, semaphore
         return await fetch_item_data(url=url, session=session)
 
 
-async def main():
+async def main(offset: int, limit: int, semaphore: int = MAX_CONCURENT_REQUESTS):
     """
     Main func that uses links_fetcher, fetch_item_data and save_parsed_data to complete the parser
     """
     semaphore = asyncio.Semaphore(MAX_CONCURENT_REQUESTS)
 
     async with aiohttp.ClientSession() as session:
-        urls = await links_fetcher(url=SITEMAP_URL, session=session, offset=OFFSET, limit=URL_COUNT)
+        urls = await links_fetcher(url=SITEMAP_URL, session=session, offset=offset, limit=limit)
         logger.info(
             f"Parser: Links found: {len(urls)}. Starting data collection...")
 
@@ -46,5 +46,5 @@ async def main():
     return valid_data
 
 
-if __name__ == '__main__':
-    final_data = asyncio.run(main())
+if __name__ == "__main__":
+    final_data = asyncio.run(main(offset=OFFSET, limit=URL_COUNT))
