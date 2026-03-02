@@ -32,3 +32,10 @@ def not_found_exception_404(item_name: str = "Item"):
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"{item_name} not found"
     )
+
+
+def too_many_requests_429(detail: str):
+    raise HTTPException(
+        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+        detail=detail
+    )
