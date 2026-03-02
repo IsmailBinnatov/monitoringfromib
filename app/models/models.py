@@ -1,6 +1,6 @@
 from datetime import datetime
 import enum
-from sqlalchemy import String, ForeignKey, func, Enum
+from sqlalchemy import DateTime, String, ForeignKey, func, Enum
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
@@ -80,3 +80,14 @@ class RefreshToken(Base):
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"))
     user: Mapped["User"] = relationship(back_populates="refresh_tokens")
+
+
+class SystemTask(Base):
+    __tablename__ = "system_tasks"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    task_name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    last_run_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True)
+    status: Mapped[str] = mapped_column(String, default="idle")
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
