@@ -9,7 +9,7 @@ LOG_FILE = BASE_DIR / "app.log"
 
 
 formatter = logging.Formatter(
-    fmt="%(levelname)s | %(asctime)s | %(message)s",
+    fmt="%(asctime)s | %(levelname)s | %(message)s",
     datefmt="%d-%m-%Y %H:%M:%S"
 )
 
