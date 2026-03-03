@@ -6,6 +6,9 @@ from app.api.routers.products import router as api_router
 from app.api.routers.users import router as user_router
 from app.api.routers.parser import router as parser_router
 
+from starlette.middleware.base import BaseHTTPMiddleware
+from app.middlewares import modify_request_response_middleware
+
 
 app = FastAPI(
     title="API Price Monitoring",
@@ -14,6 +17,8 @@ app = FastAPI(
 )
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.add_middleware(BaseHTTPMiddleware,
+                   dispatch=modify_request_response_middleware)
 
 
 app.include_router(product_router)
