@@ -25,6 +25,7 @@ This project is a powerful tool designed to automate the collection and analysis
 5. **RESTful API:** Clean and well-documented endpoints following industry standards.
 6. **Background Task Execution:** Long-running scraping processes are delegated to FastAPI `BackgroundTasks`, keeping the API instantly responsive for clients.
 7. **Smart Rate Limiting & RBAC:** A custom, database-backed rate limiter prevents server overload by enforcing a 1-hour cooldown for standard users, seamlessly integrated with Role-Based Access Control for administrative overrides.
+8. **Global Logging & Monitoring:** A custom FastAPI middleware intercepts all incoming requests, measuring and logging processing times to ensure optimal API performance and track system behavior.
 
 ## 📥 Local Development Setup
 
