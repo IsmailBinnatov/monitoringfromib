@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_async_db
-from app.schemas import ProductWithPrices
+from app.schemas import ProductWithPrices, ProductPaginationResponse
 from app import crud
 
 from app import exceptions
@@ -20,10 +20,16 @@ router = APIRouter(
 # ----- Method: GET
 
 
-@router.get("/", response_model=list[ProductWithPrices], status_code=status.HTTP_200_OK)
-async def get_products(db: AsyncSession = Depends(get_async_db)):
+@router.get("/", response_model=ProductPaginationResponse, status_code=status.HTTP_200_OK)
+async def get_products(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(15, ge=1, le=50),
+    min_price: int | None = Query(None, ge=0),
+    max_price: int | None = Query(None, ge=0),
+    db: AsyncSession = Depends(get_async_db)
+):
     """Returns all products"""
-    return await crud.get_all_products(db)
+    return await crud.get_all_products(page=page, page_size=page_size, min_price=min_price, max_price=max_price, db=db)
 
 
 @router.get("/{product_id}", response_model=ProductWithPrices, status_code=status.HTTP_200_OK)
