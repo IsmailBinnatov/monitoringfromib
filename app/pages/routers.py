@@ -17,7 +17,7 @@ templates = Jinja2Templates(directory="app/templates")
 async def get_products(request: Request, db: AsyncSession = Depends(get_async_db)):
     products = await crud.get_all_products(db)
     return templates.TemplateResponse(
-        name="products.html",
+        name="index.html",
         context={
             "request": request,
             "products": products
