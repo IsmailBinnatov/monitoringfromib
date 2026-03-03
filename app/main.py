@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.pages.routers import router as product_router
@@ -29,4 +30,4 @@ app.include_router(parser_router)
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to Apple Price Monitor API! Go to /docs for Swagger"}
+    return RedirectResponse(url="/products")
