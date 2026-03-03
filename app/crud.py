@@ -5,8 +5,15 @@ from sqlalchemy import delete, select
 from app.models import Product, PriceHistory
 
 
+# ----- Product and Price
+
+
 async def get_all_products(db: AsyncSession):
-    products = (await db.scalars(select(Product).options(selectinload(Product.prices)))).all()
+    products = (await db.scalars(
+        select(Product)
+        .options(selectinload(Product.prices))
+        .order_by(Product.id))
+    ).all()
     return products
 
 
