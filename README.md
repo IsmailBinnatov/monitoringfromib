@@ -6,6 +6,7 @@ This project is a powerful tool designed to automate the collection and analysis
 ---
 
 ## 🔗 Live Environment
+- **Main Page (Products):** [https://monitoringfromib-api.onrender.com/](https://monitoringfromib-api.onrender.com/)
 - **Interactive API Documentation (Swagger UI):** [https://monitoringfromib-api.onrender.com/docs](https://monitoringfromib-api.onrender.com/docs)
 - **Deployment Platform:** Render Cloud
 - **Database:** Managed PostgreSQL Service
