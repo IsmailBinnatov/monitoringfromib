@@ -1,50 +1,53 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product.name }} - Детали</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='styles/style.css') }}">
-</head>
-<body>
-    <div class="container">
-        <a href="/products">← Назад к списку товаров</a>
-        
-        <h1>{{ product.name }}</h1>
-        <p><strong>Оригинал:</strong> <a href="{{ product.url }}" target="_blank">Ссылка на магазин</a></p>
+{% extends "base.html" %}
 
-        <h3>Характеристики:</h3>
-        <ul class="attributes-list">
-            {% if product.attributes %}
-                {% for key, value in product.attributes.items() %}
-                    <li><strong>{{ key }}:</strong> {{ value }}</li>
-                {% endfor %}
-            {% else %}
-                <li>Характеристики не указаны</li>
-            {% endif %}
-        </ul>
+{% block title %}{{ product.name }} - Детали{% endblock %}
 
-        <h3>История изменения цен:</h3>
-        {% if product.prices %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Дата фиксации</th>
-                        <th>Цена</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in product.prices %}
+{% block content %}
+    <a href="/products" class="back-link">← Назад к списку товаров</a>
+    
+    <h1>{{ product.name }}</h1>
+    <p><strong>Оригинал:</strong> <a href="{{ product.url }}" target="_blank" class="shop-link">Ссылка на магазин</a></p>
+
+    <div class="product-details-container">
+        <div class="product-attributes">
+            <div class="product-card">
+                <h3>Характеристики:</h3>
+                <ul class="attributes-list">
+                    {% if product.attributes %}
+                        {% for key, value in product.attributes.items() %}
+                            <li><strong>{{ key }}:</strong> {{ value }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li>Характеристики не указаны</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="product-prices">
+            <h3>История изменения цен:</h3>
+            {% if product.prices %}
+                <table>
+                    <thead>
                         <tr>
-                            <td>{{ item.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
-                            <td>{{ item.price }} руб.</td>
+                            <th>Дата фиксации</th>
+                            <th>Цена</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>История цен пока пуста.</p>
-        {% endif %}
+                    </thead>
+                    <tbody>
+                        {% for item in product.prices %}
+                            <tr>
+                                <td>{{ item.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                                <td><strong>{{ item.price }} руб.</strong></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="product-card">
+                    <p>История цен пока пуста.</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
-</body>
-</html>
+{% endblock %}

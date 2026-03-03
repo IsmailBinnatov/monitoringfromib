@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Мониторинг цен{% endblock %}
+
+{% block content %}
+    <h1>Список отслеживаемых товаров</h1>
+
+    {% if products %}
+        <div class="products-list">
+            {% for product in products %}
+                <div class="product-card">
+                    <h3>{{ product.name }}</h3>
+                    <p class="product-id">ID: {{ product.id }}</p>
+                    <a href="/products/{{ product.id }}" class="btn">История цен</a>
+                </div>
+            {% endfor %}
+        </div> 
+    {% else %}  
+        <div class="product-card">
+            <p>База данных пока пуста. Добавьте первый товар!</p>
+        </div>
+    {% endif %}
+{% endblock %}
